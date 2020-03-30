@@ -2,7 +2,7 @@
 
   <group ns="turtlesim">
     <node pkg="turtlesim" name="sim" type="turtlesim_node" >
-    <param name="forward" value="r"/>
+    <param name="forward" value="q"/>
     <param name="backward" value="f"/>
     <param name="right" value="g"/>
     <param name="left" value="d"/>
