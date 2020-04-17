@@ -38,15 +38,18 @@ def convertToFile():
             file.write("  l_rpy: 0 0 0\n")
             file.write("  l_len: {}\n".format(a))
     with open('../yaml/sizeparams.yaml', 'w') as file:
-        file.write('base_width: 0.25\n')
-        file.write('base_height: 0.5\n')
+        avrga = 0
         for key in parameters.keys():
-
             a, d, alpha, theta = parameters[key]
             a=float(a)
-            
-            file.write('link'+key+'_width: 0.125\n')
+            avrga += a
             file.write('link'+key+'_height: {}\n'.format(a))
+        avrga = avrga / 3
+        file.write('base_width: {}\n'.format(avrga/2))
+        file.write('base_height: {}\n'.format(avrga))
+        file.write('linki1_width: {}\n'.format(avrga/6))
+        file.write('linki2_width: {}\n'.format(avrga/6))
+        file.write('linki3_width: {}\n'.format(avrga/6))
 if __name__ == '__main__':
 
     convertToFile()
