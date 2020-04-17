@@ -15,7 +15,7 @@ def convertToFile():
 
         for key in parameters.keys():
 
-            a, d, alpha, theta = parameters[key]
+            a, alpha, d, theta = parameters[key]
             a=float(a)
             d=float(d)
             alpha=float(alpha)
