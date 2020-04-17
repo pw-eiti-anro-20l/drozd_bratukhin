@@ -5,7 +5,7 @@ from tf.transformations import *
 
 x_axis, y_axis, z_axis = (1, 0, 0), (0, 1, 0), (0, 0, 1)
 
-def convertToFile():
+def convertDh():
 
     with open('../yaml/dhparams.json', 'r') as file:
 
@@ -52,4 +52,4 @@ def convertToFile():
         file.write('linki3_width: {}\n'.format(avrga/6))
 if __name__ == '__main__':
 
-    convertToFile()
+    convertDh()
