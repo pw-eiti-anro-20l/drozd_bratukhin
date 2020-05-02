@@ -15,7 +15,7 @@ def convertDh():
 
         for key in parameters.keys():
 
-            a, alpha, d, theta = parameters[key]
+            a, d, alpha, theta = parameters[key]
             a=float(a)
             d=float(d)
             alpha=float(alpha)
@@ -34,22 +34,9 @@ def convertDh():
             file.write(key + ":\n")
             file.write("  j_xyz: {} {} {}\n".format(*xyz))
             file.write("  j_rpy: {} {} {}\n".format(*rpy))
-            file.write("  l_xyz: {} 0 0\n".format(xyz[0] / 2))
+            file.write("  l_xyz: 0 0 {}\n".format(xyz[2] / 2))
             file.write("  l_rpy: 0 0 0\n")
-            file.write("  l_len: {}\n".format(a))
-    with open('../yaml/sizeparams.yaml', 'w') as file:
-        avrga = 0
-        for key in parameters.keys():
-            a, d, alpha, theta = parameters[key]
-            a=float(a)
-            avrga += a
-            file.write('link'+key+'_height: {}\n'.format(a))
-        avrga = avrga / 3
-        file.write('base_width: {}\n'.format(avrga/2))
-        file.write('base_height: {}\n'.format(avrga))
-        file.write('linki1_width: {}\n'.format(avrga/6))
-        file.write('linki2_width: {}\n'.format(avrga/6))
-        file.write('linki3_width: {}\n'.format(avrga/6))
+            file.write("  l_len: {}\n".format(d))
 if __name__ == '__main__':
 
     convertDh()

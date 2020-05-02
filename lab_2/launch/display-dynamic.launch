@@ -5,7 +5,7 @@
     <arg name="gui" default="true" />
     <arg name="model" default="$(find lab_2)/urdf/dynamicmodel.urdf.xacro"/>
 
-    <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)"/>
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)"/> 
     <param name ="joint_state_publisher_gui" value="true"/>
     <param name ="use_gui" value="true"/>
     

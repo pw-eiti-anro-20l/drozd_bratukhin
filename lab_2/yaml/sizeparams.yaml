@@ -1,8 +1,6 @@
-linki1_height: 1.5
-linki3_height: 0.5
-linki2_height: 1.0
-base_width: 0.5
-base_height: 1.0
-linki1_width: 0.166666666667
-linki2_width: 0.166666666667
-linki3_width: 0.166666666667
+linki3_height: 0.2
+base_width: 0.2
+base_height: 0.4
+linki1_width: 0.1
+linki2_width: 0.05
+linki3_width: 0.03
