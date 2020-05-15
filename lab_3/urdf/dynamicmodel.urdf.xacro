@@ -34,7 +34,7 @@
             <geometry>
                 <box size="${size['linki1_width']} ${size['linki1_width']} ${props['i2']['l_len']}"/>
             </geometry>
-            <origin xyz="${props['i2']['l_xyz']}" rpy="${props['i2']['l_rpy']}"/>
+            <origin xyz="0 0 -0.25" rpy="${props['i1']['l_rpy']}"/>
             <material name="red"/>
         </visual>
     </link>
@@ -44,7 +44,7 @@
             <geometry>
                 <box size="${size['linki2_width']} ${size['linki2_width']} ${props['i3']['l_len']}"/>
             </geometry>
-            <origin xyz="${props['i3']['l_xyz']}" rpy="${props['i3']['l_rpy']}"/>
+            <origin xyz="0 0 -0.25" rpy="${props['i2']['l_rpy']}"/>
             <material name="green"/>
         </visual>
     </link>
@@ -54,7 +54,7 @@
             <geometry>
                 <box size="${size['linki3_width']} ${size['linki3_width']} ${size['linki3_height']}"/>
             </geometry>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0.1" rpy="0 0 0"/>
             <material name="white"/>
         </visual>
     </link>
@@ -65,7 +65,7 @@
         <child link="link_1"/>
         <origin xyz="${props['i1']['j_xyz']}" rpy="${props['i1']['j_rpy']}"/>
         <axis xyz="0 0 1"/>
-        <limit effort="1000.0" lower="-0.4" upper="0" velocity="0.5"/>
+        <limit effort="1000.0" lower="-0.2" upper="0.3" velocity="0.5"/>
     </joint>
 
     <joint name="link1_link2" type="prismatic">
@@ -73,14 +73,14 @@
         <child link="link_2"/>
         <origin xyz="${props['i2']['j_xyz']}" rpy="${props['i2']['j_rpy']}"/>
         <axis xyz="0 0 1"/>
-        <limit effort="1000.0" lower="-0.4" upper="0" velocity="0.5"/>
+        <limit effort="1000.0" lower="-0.50" upper="0" velocity="0.5"/>
     </joint>
 
     <joint name="link2_link3" type="prismatic">
         <parent link="link_2"/>
         <child link="link_3"/>
         <origin xyz="${props['i3']['j_xyz']}" rpy="${props['i3']['j_rpy']}"/>
-        <limit effort="1000.0" lower="-0.1" upper="0.1" velocity="0.5"/>
+        <limit effort="1000.0" lower="-0.7" upper="-0.5" velocity="0.5"/>
         <axis xyz="0 0 1"/>
     </joint>
 

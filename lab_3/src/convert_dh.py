@@ -3,30 +3,29 @@
 import json
 from tf.transformations import *
 
-x_axis, y_axis, z_axis = (1, 0, 0), (0, 1, 0), (0, 0, 1)
+xaxis, zaxis = (1, 0, 0),(0, 0, 1)
 
 def convertDh():
 
     with open('../yaml/dhparams.json', 'r') as file:
 
-        parameters = json.loads(file.read())
+        param = json.loads(file.read())
 
     with open('../yaml/urdf.yaml', 'w') as file:
 
-        for key in parameters.keys():
-
-            a, d, alpha, theta = parameters[key]
+        for key in param.keys():
+            a, d, alpha, th = param[key]   
             a=float(a)
             d=float(d)
             alpha=float(alpha)
-            theta=float(theta)
+            th=float(th)
 
-            tz = translation_matrix((0, 0, d))
-            rz = rotation_matrix(theta, z_axis)
-            tx = translation_matrix((a, 0, 0))
-            rx = rotation_matrix(alpha, x_axis)
+            tz = translation_matrix((0, 0, d))  
+            rz = rotation_matrix(th, zaxis)     
+            tx = translation_matrix((a, 0, 0))  
+            rx = rotation_matrix(alpha, xaxis)  
 
-            matrix = concatenate_matrices(tz, rz, tx, rx)
+            matrix = concatenate_matrices(rx, tx, rz, tz) 
 
             rpy = euler_from_matrix(matrix)
             xyz = translation_from_matrix(matrix)
@@ -34,9 +33,10 @@ def convertDh():
             file.write(key + ":\n")
             file.write("  j_xyz: {} {} {}\n".format(*xyz))
             file.write("  j_rpy: {} {} {}\n".format(*rpy))
-            file.write("  l_xyz: 0 0 {}\n".format(xyz[2] / 2))
+            file.write("  l_xyz: 0 0 {}\n".format(xyz[2]/2))
             file.write("  l_rpy: 0 0 0\n")
             file.write("  l_len: {}\n".format(d))
 if __name__ == '__main__':
-
+    param = {}
+    results = ''
     convertDh()

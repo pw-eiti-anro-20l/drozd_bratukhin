@@ -53,7 +53,7 @@ def forward_kinematics(data):
         if min_joint <= data.position[i] <= max_joint:
             joints[i] = data.position[i]
         else:
-            rospy.logwarn("Wrong joint value")
+            rospy.logwarn("Incorrect joint value")
             return
 
     fk=PyKDL.ChainFkSolverPos_recursive(chain)
