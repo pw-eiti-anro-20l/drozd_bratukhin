@@ -21,9 +21,9 @@ def checkScope(data):
 def forward_kinematics(data):
 
     if not checkScope(data):
-        rospy.logwarn("Incorrect joint value!")
+        rospy.logwarn("Incorrect joint position[NON_KDL]!")
         return
-        
+
     xaxis = (1,0,0)
     zaxis = (0,0,1)
     Tres=translation_matrix((0,0,0))
@@ -54,32 +54,10 @@ def forward_kinematics(data):
     pose.pose.orientation.w = qw
     pub.publish(pose)
 
-    # marker = Marker()
-    # marker.header.frame_id = 'base_link'
-    # marker.type = marker.SPHERE
-    # marker.action = marker.ADD
-    # marker.pose.orientation.w = 1
-
-    # time = rospy.Duration()
-    # marker.lifetime = time
-    # marker.scale.x = 0.09
-    # marker.scale.y = 0.09
-    # marker.scale.z = 0.09
-    # marker.pose.position.x = x;
-    # marker.pose.position.y = y;
-    # marker.pose.position.z = z;
-    # marker.pose.orientation.x = qx;
-    # marker.pose.orientation.y = qy;
-    # marker.pose.orientation.z = qz;
-    # marker.pose.orientation.w = qw;
-    # marker.color.a = 0.7
-    # marker.color.r = 0.5
-    # marker.color.g = 0.0
-    # marker.color.b = 0.6
-    # marker_pub.publish(marker)
-
 if __name__ == '__main__':
     rospy.init_node('NONKDL_DKIN', anonymous=True)
+    pub = rospy.Publisher('nkdl_pose', PoseStamped, queue_size=10)
+    rospy.Subscriber('joint_states', JointState, forward_kinematics)
     params = {}
     scope = {}
     with open(os.path.dirname(os.path.realpath(__file__)) + '/../yaml/dhparams.json', 'r') as file:
@@ -87,12 +65,4 @@ if __name__ == '__main__':
         rospy.logwarn
     with open(os.path.dirname(os.path.realpath(__file__)) + '/../yaml/restrictions.json', 'r') as file:
         scope = json.loads(file.read())
-
-
-    pub = rospy.Publisher('nkdl_pose', PoseStamped, queue_size=10)
-    # marker_pub = rospy.Publisher('nkdl_visual', Marker, queue_size=100)
-
-    rospy.Subscriber('joint_states', JointState, forward_kinematics)
-
-
     rospy.spin()
