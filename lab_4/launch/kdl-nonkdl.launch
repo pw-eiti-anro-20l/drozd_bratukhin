@@ -1,0 +1,4 @@
+<launch>
+    <node name="KDL" pkg="lab_3" type="kdl.py" />
+    <node name="NO_KDL" pkg="lab_3" type="nonkdl.py" />
+</launch>
