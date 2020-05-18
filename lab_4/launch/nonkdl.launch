@@ -1,5 +1,0 @@
-<launch>
-
-    <node name="NO_KDL" pkg="lab_3" type="nonkdl.py" />
-
-</launch>

@@ -1,0 +1,3 @@
+<launch>
+    <node name="jint" pkg="lab_4" type="jint.py" />
+</launch>

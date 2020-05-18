@@ -1,5 +1,0 @@
-<launch>
-
-    <node name="KDL" pkg="lab_3" type="kdl.py" />
-
-</launch>
