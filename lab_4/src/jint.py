@@ -9,7 +9,7 @@ import math
 import rospy
 
 def linear_interpolation(start, end, t, exectime):
-    return start + (end - start) * t / exectime
+    return 1
 
 def polynomial_interpolation(start, end, t, exectime):
     a = -2*(end-start)/(exectime**3)
@@ -65,6 +65,7 @@ def interpolate(data):
         jstate.position = joints
         pub.publish(jstate)
         rate.sleep()
+
     
     return "Interpolation completed succesfully!"
     
