@@ -9,7 +9,6 @@ project(lab2-poprawa)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   rospy
-  std_masgs
   tf
 )
 

@@ -132,7 +132,7 @@ include_directories(
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
-## The recommended prefix ensures that target names across packages don't collide
+## The recommended prefix ens`ures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/lab_4_node.cpp)
 
 ## Rename C++ executable without prefix

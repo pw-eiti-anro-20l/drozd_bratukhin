@@ -8,8 +8,10 @@ from std_msgs.msg import Header
 import math
 import rospy
 
+freq = 50.0
+
 def linear_interpolation(start, end, t, exectime):
-    return 1
+    return start + ((end-start)/exectime) * t
 
 def polynomial_interpolation(start, end, t, exectime):
     a = -2*(end-start)/(exectime**3)
@@ -37,41 +39,41 @@ def check_validation(parametres):
 
 def interpolate(data):
     global pub
-
-    prev_joints = rospy.wait_for_message ('joint_states', JointState, timeout = 10).position
+    global prev_joints
     if not check_validation(data):
         return "Enter valid data(time must be positive,joints restrictions: -0.2<=j1<=0.15,  -0.4<=j2<=0,  -0.7<=j3<=-0.5"
     interpolation_function = set_interpolation_function(data.type)
     if not interpolation_function:
         return "Enter valid interpolation type: linear or polynomial"
-    rate = rospy.Rate(50)
+    rate = rospy.Rate(freq)
+
+    jstate = JointState()
+    jstate.name = ['base_link1', 'link1_link2', 'link2_link3']
+    jstate.header = Header()
     end_joints = [data.joint1, data.joint2, data.joint3]
-    iterations_number = int(math.ceil(data.t * 50))
-    t = 1.0/50.0;
+    iterations_number = int(math.ceil(data.t * freq))
+    t = 1.0/freq
     for i in range(iterations_number):
 
-        
-        jstate = JointState()
-        jstate.name = ['base_link1', 'link1_link2', 'link2_link3']
-        jstate.header = Header()
         jstate.header.stamp = rospy.Time.now()
         joints = []
         joints.append(interpolation_function(prev_joints[0], end_joints[0], t, data.t))
         joints.append(interpolation_function(prev_joints[1], end_joints[1], t, data.t))
         joints.append(interpolation_function(prev_joints[2], end_joints[2], t, data.t))
         
-        t = t + 1.0/50.0
+        t = t + 1.0/freq
 
         jstate.position = joints
         pub.publish(jstate)
         rate.sleep()
-
-    
+    prev_joints=jstate.position
     return "Interpolation completed succesfully!"
     
 def jint():
     global pub
+    global prev_joints
 
+    prev_joints=[0.0,0.0,-0.6]
     rospy.init_node('jint')
     pub = rospy.Publisher('/joint_states', JointState, queue_size = 10)
     service = rospy.Service('jint_control_srv', Jint, interpolate)
@@ -79,4 +81,3 @@ def jint():
 
 if __name__ == "__main__":
     jint()
-
