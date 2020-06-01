@@ -7,13 +7,10 @@
     <param name="use_gui" value="$(arg gui)"/>
     <param name="publish_default_positions" value="true"/>
     <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
-
+<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+  	<rosparam param="source_list">["jint_control"]</rosparam>
+  </node>
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
-    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    	<rosparam param="source_list">["jint_control"]</rosparam>
-    </node>
     <node name="rviz" pkg="rviz" type="rviz" args ="-d $(arg rvizconfig)" required="true"/>
     <node name="oint" pkg="lab_5" type="oint.py"/>
-    <node name="rectangle" pkg="lab_5" type="ocmd_rec.py"/>
-    <node name="ikin" pkg="lab_5" type="ikin.py"/>
 </launch>

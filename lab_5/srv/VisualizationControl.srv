@@ -1,0 +1,4 @@
+string shape
+int64 n_cycles
+---
+bool status

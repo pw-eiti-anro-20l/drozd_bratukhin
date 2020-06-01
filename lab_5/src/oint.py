@@ -6,92 +6,86 @@ from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
 from nav_msgs.msg import Path
 import math
-from sys import stderr
 from geometry_msgs.msg import PoseStamped
+ 
 
-def linear_interpolation(start, end, t, exectime):
-    return start + (end - start) * t / exectime
+class OintInterpolator:
 
-def polynomial_interpolation(start, end, t, exectime):
-    a = -2*(end-start)/(exectime**3)
-    b = 3*(end-start)/(exectime**2)
-    return start + b*(t**2) + a*(t**3)
+	def __init__(self):
+		self.current_position = [ 0.0, 0.0, 0.0 ]
+		self.current_q = [ 0.0, 0.0, 0.0, 1.0 ]
+		self.frequency = 50
+		self.path = Path()
 
-def set_interpolation_function(interpolation_type):
-    if ( interpolation_type == "linear" ):
-        interpolation_function = linear_interpolation
-        return interpolation_function
-    elif( interpolation_type == "polynomial" ):
-        interpolation_function = polynomial_interpolation
-        return interpolation_function
-    else:
-        return False
+		self.init_node()
+		self.setup_publisher()
+		self.setup_service()
+		self.setup_rate()
 
-def check_validation(parametres):
-    if( parametres.t <= 0):
-        return False
-    return True
+	def init_node(self):
+		rospy.init_node('int_srv')
 
-def interpolate(data):
-    global pose_pub
-    global path_pub
-    global prev_position
-    global prev_q
-    global path
+	def setup_publisher(self):
+		self.publisher = rospy.Publisher('oint', PoseStamped, queue_size=10)
+		self.path_publisher = rospy.Publisher('oint_path', Path, queue_size=10)
 
-    rate = rospy.Rate(50)
-    if not check_validation(data):
-        return "Enter valid time!"
-    interpolation_function = set_interpolation_function(data.type)
-    if not interpolation_function:
-        return "Enter valid interpolation type: linear or polynomial"
-    position = (data.x, data.y, data.z)
-    q = (data.qx, data.qy, data.qz, data.qw)
-    iterations_number = int(math.ceil(data.t * 50))
-    t = 1.0 / 50.0
-    for i in range(iterations_number):
-    	x = interpolation_function(prev_position[0], position[0], t, data.t)
-    	y = interpolation_function(prev_position[1], position[1], t, data.t)
-    	z = interpolation_function(prev_position[2], position[2], t, data.t)
-    	qx = interpolation_function(prev_q[0], q[0], t, data.t)
-    	qy = interpolation_function(prev_q[1], q[1], t, data.t)
-    	qz = interpolation_function(prev_q[2], q[2], t, data.t)
-    	qw = interpolation_function(prev_q[3], q[3], t, data.t)
-    	pose = PoseStamped()
-    	pose.header.frame_id = "base_link"
-    	pose.header.stamp = rospy.Time.now()
-    	pose.pose.position.x = x
-    	pose.pose.position.y = y
-    	pose.pose.position.z = z
-    	pose.pose.orientation.x = qx
-    	pose.pose.orientation.y = qy
-    	pose.pose.orientation.z = qz
-    	pose.pose.orientation.w = qw
-    	pose_pub.publish(pose)
-    	path.header = pose.header
-    	path.poses.append(pose)
-    	path_pub.publish(path)
-    	t = t + 1.0/50.0
-    	rate.sleep()
-    prev_position = position
-    prev_q = q
-    return "Interpolation completed succesfully!"
+	def setup_service(self):
+		self.service = rospy.Service('oint_control_srv', Oint, self.create_interpolation)
+
+	def setup_rate(self):
+		self.rate = rospy.Rate(self.frequency)
+
+	def validate_message(self, message):
+		if message.t <= 0:
+			return False
+
+		return True
+
+	def calculate_step(self, start, end, current_time, time):
+		return start + ((end - start)/time) * current_time
+
+	def create_interpolation(self, data):
+		if self.validate_message(data) == False:
+			return False
+
+		new_position = (data.x, data.y, data.z)
+		new_q = (data.qx, data.qy, data.qz, data.qw)
+		how_many_frames = int(math.ceil(data.t * self.frequency))
+		current_time = 1.0 / self.frequency
+
+		for i in range(how_many_frames):
+			x = self.calculate_step(self.current_position[0], new_position[0], current_time, data.t)
+			y = self.calculate_step(self.current_position[1], new_position[1], current_time, data.t)
+			z = self.calculate_step(self.current_position[2], new_position[2], current_time, data.t)
+			qx = self.calculate_step(self.current_q[0], new_q[0], current_time, data.t)
+			qy = self.calculate_step(self.current_q[1], new_q[1], current_time, data.t)
+			qz = self.calculate_step(self.current_q[2], new_q[2], current_time, data.t)
+			qw = self.calculate_step(self.current_q[3], new_q[3], current_time, data.t)
 
 
-def oint():
-    global pose_pub
-    global path_pub
-    global prev_position
-    global prev_q
-    global path
-    path = Path()
-    rospy.init_node('oint')
-    prev_position = [ 0.0, 0.0, 0.0]
-    prev_q = [ 0.0, 0.0, 0.0, 1.0]
-    pose_pub = rospy.Publisher('oint_pose', PoseStamped, queue_size=10)
-    path_pub = rospy.Publisher('oint_path', Path, queue_size=10)
-    service = rospy.Service('oint_control_srv', Oint, interpolate)
-    rospy.spin()
+			pose = PoseStamped()
+			pose.header.frame_id = "base_link"
+			pose.header.stamp = rospy.Time.now()
+			pose.pose.position.x = x
+			pose.pose.position.y = y
+			pose.pose.position.z = z
+			pose.pose.orientation.x = qx
+			pose.pose.orientation.y = qy
+			pose.pose.orientation.z = qz
+			pose.pose.orientation.w = qw
+			self.publisher.publish(pose)
 
-if __name__=="__main__":
-    oint()
+			self.path.header = pose.header
+			self.path.poses.append(pose)
+			self.path_publisher.publish(self.path)
+
+			current_time = current_time + 1.0/self.frequency
+			self.rate.sleep()
+
+		self.current_position = new_position
+		self.current_q = new_q
+		return True
+ 
+if __name__ == "__main__":
+	interpolator = OintInterpolator()
+	rospy.spin()

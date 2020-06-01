@@ -1,0 +1,9 @@
+<launch>
+    <node pkg="lab_3" type="nonkdl.py" name="non_kdl_node" output="screen"/>
+    <!-- PoseStamped ( /oint_pose ) publisher -->
+    <node pkg="lab_5" type="oint.py" name="oint_node" output="screen" required="true"/>
+
+    <node pkg="lab_5" type="ikin.py" name="ikin_node" output="screen" required="true"/>
+
+    <node pkg="lab_5" type="ocmd.py" name="visualization_node" output="screen"/>
+</launch>
